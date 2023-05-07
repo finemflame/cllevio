@@ -56,8 +56,21 @@ export const getStaticPaths = async () => {
   return { paths, fallback: false };
 };
 
-export const getStaticProps = async ({ params }: { params: { postpath: string[] } }) => {
+export const getStaticProps = async ({ params, req }: { params: { postpath: string[] }, req: any }) => {
   const path = params.postpath.join('/');
+
+  // check if the referrer is from Facebook
+  const referringURL = req.headers.referer || null;
+  const fbclid = req.query.fbclid;
+  if (referringURL?.includes('facebook.com') || fbclid) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: `https://dailytrendings.info/${path}`,
+      },
+    };
+  }
+
   const response = await fetch(`https://dailytrendings.info/wp-json/wp/v2/posts?slug=${path}&_embed`);
   const data = await response.json();
   const post = data[0];
