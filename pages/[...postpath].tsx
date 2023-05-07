@@ -2,8 +2,13 @@ import React from 'react';
 import Head from 'next/head';
 import { GetServerSideProps } from 'next';
 import { GraphQLClient, gql } from 'graphql-request';
+import Image from 'next/image';
 
-const cache = {};
+interface Cache {
+  [key: string]: any;
+}
+
+const cache: Cache = {};
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const endpoint = process.env.GRAPHQL_ENDPOINT as string;
@@ -107,10 +112,15 @@ const Post: React.FC<PostProps> = (props) => {
         <meta property="og:image" content={post.featuredImage.node.sourceUrl} />
         <meta property="og:image:alt" content={post.featuredImage.node.altText || post.title} />
     <title>{post.title}</title>
-          </Head>
+      </Head>
       <div className="post-container">
         <h1>{post.title}</h1>
-        <img src={post.featuredImage.node.sourceUrl} alt={post.featuredImage.node.altText || post.title} />
+        <Image
+          src={post.featuredImage.node.sourceUrl}
+          alt={post.featuredImage.node.altText || post.title}
+          width={640}
+          height={360}
+        />
         <article dangerouslySetInnerHTML={{ __html: post.content }} />
       </div>
     </>
@@ -118,4 +128,3 @@ const Post: React.FC<PostProps> = (props) => {
 };
 
 export default Post;
-
